@@ -2,12 +2,8 @@
 // result.php
 if (isset($_GET['search'])) {
     $searchId = $_GET['search'];
-
-    // Load the JSON data
     $jsonData = file_get_contents('data.json');
     $data = json_decode($jsonData, true);
-
-    // Check if the search ID exists in the data
     if (array_key_exists($searchId, $data)) {
         $person = $data[$searchId];
 ?>
