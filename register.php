@@ -1,24 +1,21 @@
 <?php
 // register.php (handle the form submission and display the registration form)
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get the form data
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {      // Get the form data
     $name = $_POST['name'];
     $father_name = $_POST['father_name'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $address = $_POST['address'];
-    $passport_picture_url = $_POST['passport_picture_url']; // Get the picture URL from the form
+    $passport_picture_url = $_POST['passport_picture_url']; //* Get the picture URL from the form *//
 
-    // Read the existing JSON data
+    //* Read the existing JSON data *//
     if (file_exists('data.json')) {
         $jsonData = file_get_contents('data.json');
         $data = json_decode($jsonData, true);
     } else {
         $data = [];
     }
-
-    // Check if the entered data already exists
-    $existingId = null;
+    $existingId = null; //* Check if the entered data already exists*//
     foreach ($data as $id => $user) {
         if ($user['name'] === $name && $user['father_name'] === $father_name && $user['phone'] === $phone) {
             $existingId = $id;
@@ -27,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($existingId) {
-        // If data exists, show the existing data and ID
         $_GET['exists'] = true;
         $_GET['id'] = $existingId;
         $_GET['name'] = $name;
@@ -37,40 +33,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_GET['address'] = $address;
         $_GET['passport_picture_url'] = $passport_picture_url;
     } else {
-        // Validate that the URL is not empty
         if (!empty($passport_picture_url)) {
-            // Generate a unique 8-digit ID
             $id = generateUniqueId($data);
-
-            // Add the new data with the generated ID
             $data[$id] = [
                 'name' => $name,
                 'father_name' => $father_name,
                 'phone' => $phone,
                 'email' => $email,
                 'address' => $address,
-                'passport_picture' => $passport_picture_url // Save the URL instead of the file path
+                'passport_picture' => $passport_picture_url 
             ];
 
-            // Save the updated data back to the JSON file
             file_put_contents('data.json', json_encode($data, JSON_PRETTY_PRINT));
-
-            // Set a session or GET flag to indicate success
             $_GET['success'] = true;
-            $_GET['id'] = $id;  // Pass the unique ID to the success message
+            $_GET['id'] = $id; 
         } else {
             echo "<h1>Error: Invalid picture URL.</h1>";
         }
     }
 }
-
-// Function to generate a unique 8-digit ID
 function generateUniqueId($data) {
     do {
         // Generate an 8-digit random number
         $id = 'DUM' . str_pad(rand(10000000, 99999999), 8, '0', STR_PAD_LEFT);
     } while (array_key_exists($id, $data)); // Check if the ID already exists in the data
-    return $id; // Return the unique ID
+    return $id;
 }
 ?>
 
